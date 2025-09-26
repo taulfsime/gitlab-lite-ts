@@ -1,0 +1,44 @@
+{
+  "name": "@taulfsime/gitlab-lite-ts",
+  "version": "0.0.1",
+  "description": "",
+  "license": "MIT",
+  "author": "taulfsime",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taulfsime/gitlab-lite-ts.git"
+  },
+  "keywords": [
+    "gitlab",
+    "typescript"
+  ],
+  "bugs": {
+    "url": "https://github.com/taulfsime/gitlab-lite-ts/issues"
+  },
+  "homepage": "https://github.com/taulfsime/gitlab-lite-ts#readme",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "format:check": "prettier . --check",
+    "format": "prettier . --write --list-different",
+    "types:check": "tsc --noEmit",
+    "build": "rm -rf dist && tsc",
+    "tests": "vitest run"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  }
+}
