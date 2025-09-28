@@ -34,8 +34,7 @@
     "format:check": "prettier . --check",
     "format": "prettier . --write --list-different",
     "types:check": "tsc --noEmit",
-    "build": "rm -rf dist && tsc",
-    "tests": "vitest run"
+    "build": "rm -rf dist && tsc"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
