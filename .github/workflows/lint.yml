@@ -38,6 +38,7 @@ jobs:
           node-version: 23
           registry-url: 'https://registry.npmjs.org/'
       - run: npm ci
+      - run: npm run build
       - name: Check if version is published
         id: check_version
         run: |
