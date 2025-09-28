@@ -1,6 +1,6 @@
 {
   "name": "@taulfsime/gitlab-lite-ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A minimalistic, type-safe Typescript library for GitLab API interactions.",
   "license": "MIT",
   "author": "taulfsime",
