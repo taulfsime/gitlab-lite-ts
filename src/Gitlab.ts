@@ -104,18 +104,18 @@ export class Gitlab {
     this.gitlabUrl = formatPath(gitlabUrl);
   }
 
-  async getPipelines(
+  getPipelines(
     projectId: number,
     filter: gitlab_filter_pipeline_t = {}
   ): Promise<gitlab_items_return_t<gitlab_pipeline_t>> {
     const query = filterToQuery(filter);
 
-    return await this.requestItems<gitlab_pipeline_t>(
+    return this.requestItems<gitlab_pipeline_t>(
       `/projects/${projectId}/pipelines?${query}`
     );
   }
 
-  async getJobs(
+  getJobs(
     projectId: number,
     pipelineId?: number,
     filter: gitlab_filter_job_t = {}
@@ -128,17 +128,17 @@ export class Gitlab {
       'jobs',
     ].join('/');
 
-    return await this.requestItems<gitlab_job_t>(`${url}?${query}`);
+    return this.requestItems<gitlab_job_t>(`${url}?${query}`);
   }
 
-  async listPipelinesByMergeRequest(
+  listPipelinesByMergeRequest(
     projectId: number,
     mergeRequestIId: number,
     filter: gitlab_filter_pipeline_t = {}
   ): Promise<gitlab_items_return_t<gitlab_pipeline_t>> {
     const query = filterToQuery(filter);
 
-    return await this.requestItems<gitlab_pipeline_t>(
+    return this.requestItems<gitlab_pipeline_t>(
       `/projects/${projectId}/merge_requests/${mergeRequestIId}/pipelines?${query}`
     );
   }
