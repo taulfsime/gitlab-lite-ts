@@ -18,8 +18,8 @@ export type gitlab_job_t = {
 
 type gitlab_filter_job_t = {
   id?: number;
-  order_by?: 'id' | 'status' | 'ref' | 'updated_at' | 'user_id'; // (default: id
-  sort?: 'asc' | 'desc'; // (default: desc)
+  order_by?: 'id' | 'status' | 'ref' | 'updated_at' | 'user_id';
+  sort?: 'asc' | 'desc';
   per_page?: number;
   page?: number;
 };
@@ -190,8 +190,6 @@ export class Gitlab {
 
   private async doRequest(path: string): Promise<Response | null> {
     path = formatPath(path);
-
-    // console.log([this.gitlabUrl, 'api/v4', path].join('/'));
 
     try {
       const result = await fetch([this.gitlabUrl, 'api/v4', path].join('/'), {
