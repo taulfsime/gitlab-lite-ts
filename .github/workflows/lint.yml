@@ -26,3 +26,27 @@ jobs:
           node-version: 23
       - run: npm ci
       - run: npm run types:check
+
+  deploy:
+    needs: [code-format, types-compile]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          registry-url: 'https://registry.npmjs.org/'
+      - run: npm ci
+      - name: Check if version is published
+        id: check_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PUBLISHED=$(npm view $PKG_NAME@$VERSION version || echo "")
+          echo "published_version=$PUBLISHED" >> $GITHUB_OUTPUT
+      - name: Publish if not published
+        if: steps.check_version.outputs.published_version == ''
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
