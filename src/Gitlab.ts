@@ -143,6 +143,17 @@ export class Gitlab {
     );
   }
 
+  async postCommentInMergeRequest(
+    projectId: number,
+    mergeRequestIId: number,
+    body: string
+  ): Promise<void> {
+    await this.doRequest(
+      `/projects/${projectId}/merge_requests/${mergeRequestIId}/notes?body=${encodeURIComponent(body)}`,
+      'POST'
+    );
+  }
+
   async getArtifact(
     projectId: number,
     jobId: number,
@@ -188,11 +199,15 @@ export class Gitlab {
     };
   }
 
-  private async doRequest(path: string): Promise<Response | null> {
+  private async doRequest(
+    path: string,
+    method: 'GET' | 'POST' = 'GET'
+  ): Promise<Response | null> {
     path = formatPath(path);
 
     try {
       const result = await fetch([this.gitlabUrl, 'api/v4', path].join('/'), {
+        method,
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
