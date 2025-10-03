@@ -93,6 +93,37 @@ type gitlab_items_return_t<T> = {
   items: T[];
 };
 
+type gitlab_author_t = {
+  id: number;
+  username: string;
+  public_email: string;
+  name: string;
+  state: string;
+  locked: boolean;
+  avatar_url: string;
+  web_url: string;
+};
+
+type gitlab_note_t = {
+  id: number;
+  type: string | null;
+  body: string;
+  author: gitlab_author_t;
+  created_at: string;
+  updated_at: string;
+  system: boolean;
+  noteable_id: number;
+  noteable_type: string;
+  project_id: number;
+  resolvable: boolean;
+  confidential: boolean;
+  internal: boolean;
+  imported: boolean;
+  imported_from: string;
+  noteable_iid: number;
+  commands_changes: Record<string, unknown>;
+};
+
 //TODO: (k.todorov) By default, GET requests return 20 results at a time because the API results are paginated.
 
 export class Gitlab {
@@ -149,8 +180,37 @@ export class Gitlab {
     body: string
   ): Promise<void> {
     await this.doRequest(
-      `/projects/${projectId}/merge_requests/${mergeRequestIId}/notes?body=${encodeURIComponent(body)}`,
-      'POST'
+      `/projects/${projectId}/merge_requests/${mergeRequestIId}/notes`,
+      'POST',
+      { body }
+    );
+  }
+
+  async getAllCommentsInMergeRequest(
+    projectId: number,
+    mergeRequestIId: number,
+    filter: {
+      sort?: 'asc' | 'desc';
+      order_by?: 'created_at' | 'updated_at';
+    } = {}
+  ): Promise<gitlab_items_return_t<gitlab_note_t>> {
+    const query = filterToQuery(filter);
+
+    return this.requestItems<gitlab_note_t>(
+      `/projects/${projectId}/merge_requests/${mergeRequestIId}/notes?${query}`
+    );
+  }
+
+  async updateCommentInMergeRequest(
+    projectId: number,
+    mergeRequestIId: number,
+    noteId: number,
+    body: string
+  ): Promise<void> {
+    await this.doRequest(
+      `/projects/${projectId}/merge_requests/${mergeRequestIId}/notes/${noteId}`,
+      'PUT',
+      { body }
     );
   }
 
@@ -201,17 +261,27 @@ export class Gitlab {
 
   private async doRequest(
     path: string,
-    method: 'GET' | 'POST' = 'GET'
+    method: 'GET' | 'POST' | 'PUT' = 'GET',
+    body?: any
   ): Promise<Response | null> {
     path = formatPath(path);
+    const params = {
+      method,
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    };
 
     try {
-      const result = await fetch([this.gitlabUrl, 'api/v4', path].join('/'), {
-        method,
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      });
+      const result = await fetch(
+        [this.gitlabUrl, 'api/v4', path].join('/'),
+        params
+      );
+
+      // console.log(params, result);
 
       return result;
     } catch (error) {
